@@ -1,8 +1,7 @@
 <template>
   <div id="app">
-    <h1>黑马头条</h1>
-    <div class="box">hello wxx</div>
-    <router-view />
+    <!-- 路由的出口 -->
+    <router-view ></router-view>
   </div>
 </template>
 
@@ -12,10 +11,5 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.box{
-  width: 200px;
-  height: 200px;
-  background: pink;
-}
+<style lang="less" >
 </style>
