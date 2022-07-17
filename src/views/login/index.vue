@@ -3,15 +3,43 @@
     <!-- 导航栏 -->
     <van-nav-bar class="page-nav-bar" title="登录" />
     <!-- 登录表单 -->
-    <van-form @submit="onSubmit">
-      <van-field v-model="user.mobile" name="手机号" placeholder="请输入手机号">
+    <van-form ref="loginForm" @submit="onSubmit">
+      <van-field
+        v-model="user.mobile"
+        name="mobile"
+        placeholder="请输入手机号"
+        :rules="userFromRules.mobile"
+        type="number"
+        maxlength="11"
+      >
         <i slot="left-icon" class="toutiao toutiao-shouji"></i>
       </van-field>
-      <van-field v-model="user.code" name="验证码" placeholder="请输入验证码">
+      <van-field
+        v-model="user.code"
+        name="code"
+        placeholder="请输入验证码"
+        :rules="userFromRules.code"
+        type="number"
+        maxlength="6"
+      >
         <i slot="left-icon" class="toutiao toutiao-yanzhengma"></i>
-        <template #button
-          ><!-- 新版本插槽的写法 ， 相当于slot="button" -->
-          <van-button class="send-sms-btn" round size="small" type="default"
+        <template #button>
+          <!-- time:倒计时时间 -->
+          <van-count-down
+            v-if="isCountDownShow"
+            :time="1000 * 10"
+            format="ss s"
+            @finish="isCountDownShow = false"
+          />
+          <!-- 新版本插槽的写法 ， 相当于slot="button" -->
+          <van-button
+            v-else
+            class="send-sms-btn"
+            round
+            size="small"
+            type="default"
+            native-type="button"
+            @click="onSendSms"
             >获取验证码</van-button
           >
         </template>
@@ -24,7 +52,7 @@
 </template>
 
 <script>
-import { login } from '@/api/user'
+import { login, sendSms } from '@/api/user'
 export default {
   // 组件名称
   name: 'LoginIndex',
@@ -36,9 +64,32 @@ export default {
   data () {
     return {
       user: {
-        mobile: '',
-        code: ''
-      }
+        mobile: '', // 手机号
+        code: '' // 验证码
+      },
+      userFromRules: {
+        mobile: [
+          {
+            required: true,
+            message: '手机号不能为空'
+          },
+          {
+            pattern: /^1[3|5|7|8]\d{9}$/,
+            message: '手机号格式错误'
+          }
+        ],
+        code: [
+          {
+            required: true,
+            message: '请输入验证码'
+          },
+          {
+            pattern: /^\d{6}$/,
+            message: '验证码格式错误'
+          }
+        ]
+      },
+      isCountDownShow: false // 是否展示倒计时
     }
   },
   // 计算属性
@@ -52,18 +103,44 @@ export default {
       const user = this.user
       // 2.表单验证
 
-      // 3.提交表单请求登录
+      // 在组件中必须通过this.$toast 来调用 Toast 组件
+      this.$toast.loading({
+        message: '登录中...',
+        forbidClick: true, // 禁用背景点击
+        duration: 0 // 持续时间,默认是2000毫秒  如果为0,则持续展示
+      })
+
+      // 3.请求登录
       try {
-        const res = await login(user)
-        console.log('登录成功', res)
+        const { data } = await login(user)
+        this.$store.commit('setUser', data.data)
+        this.$toast.success('登录成功')
       } catch (err) {
         if (err.response.status === 400) {
-          console.log('手机号或者验证码错误')
+          this.$toast.fail('你的手机号或验证码输入错误')
         } else {
-          console.log('登录失败', err)
+          this.$toast.fail('登录失败')
         }
       }
       // 4.根据请求响应结果处理后续操作
+    },
+    async onSendSms () {
+      // 1.验证手机号是否有效
+      try {
+        await this.$refs.loginForm.validate('mobile')
+        console.log('验证通过')
+      } catch (err) {
+        return console.log('验证失败', err)
+      }
+      // 2.验证通过.显示倒计时
+      this.isCountDownShow = true
+      // 3.请求发送验证码
+      try {
+        const res = await sendSms(this.user.mobile)
+        console.log('登录成功', res)
+      } catch (err) {
+        console.log('登录失败', err)
+      }
     }
   },
   // 以下是生命周期钩子   注：没用到的钩子请自行删除
