@@ -1,7 +1,10 @@
 <template>
   <div class="login-container">
     <!-- 导航栏 -->
-    <van-nav-bar class="page-nav-bar" title="登录" />
+    <van-nav-bar class="page-nav-bar" title="登录">
+      <van-icon slot="left" name="cross" @click="$router.back()" />
+    </van-nav-bar>
+    <!--增加如下-->
     <!-- 登录表单 -->
     <van-form ref="loginForm" @submit="onSubmit">
       <van-field
@@ -104,7 +107,7 @@ export default {
       // 2.表单验证
 
       // 在组件中必须通过this.$toast 来调用 Toast 组件
-      this.$toast.loading({
+      this.$toast({
         message: '登录中...',
         forbidClick: true, // 禁用背景点击
         duration: 0 // 持续时间,默认是2000毫秒  如果为0,则持续展示
@@ -115,6 +118,7 @@ export default {
         const { data } = await login(user)
         this.$store.commit('setUser', data.data)
         this.$toast.success('登录成功')
+        this.$router.back()
       } catch (err) {
         if (err.response.status === 400) {
           this.$toast.fail('你的手机号或验证码输入错误')

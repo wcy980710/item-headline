@@ -5,8 +5,8 @@
     <!-- 子路由出口 -->
     <!-- 标签导航栏 -->
     <!-- route:开启路由模式 -->
-    <van-tabbar class="layout-tabbar"  route>
-      <van-tabbar-item to="/shouye">
+    <van-tabbar class="layout-tabbar" route>
+      <van-tabbar-item :to="{ name: 'shouye' }">
         <i slot="icon" class="toutiao toutiao-shouye"></i>
         <span class="text">首页</span>
       </van-tabbar-item>
@@ -20,7 +20,7 @@
       </van-tabbar-item>
       <van-tabbar-item to="/wode">
         <i slot="icon" class="toutiao toutiao-wode"></i>
-        <span class="text">我的</span>
+        <span class="text">{{ $store.state.user ? "我的" : "未登录" }}</span>
       </van-tabbar-item>
     </van-tabbar>
     <!-- 标签导航栏 -->
@@ -37,8 +37,7 @@ export default {
   components: {},
   // 组件状态值
   data () {
-    return {
-    }
+    return {}
   },
   // 计算属性
   computed: {},

@@ -1,12 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { getItem, setItem } from '@/utils/storage'
-
+import { TOKEN_KEY } from '@/constDaochu/daochuConst'
 Vue.use(Vuex)
-
-// 定义常量来接收本地存储的token数据
-const TOKEN_KEY = 'TOUTIAO_USER'
-
 export default new Vuex.Store({
   state: {
     // 一个对象,储存当前登录用户信息(token等数据) 注意本地存的数据为字符串格式(包装好)

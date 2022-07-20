@@ -6,11 +6,11 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'layout',
+    // name: "layout",
     component: () => import('@/views/layout'),
     children: [
       {
-        path: '/shouye',
+        path: '',
         name: 'shouye',
         component: () => import('@/views/shouye')
       },
