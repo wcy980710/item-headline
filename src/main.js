@@ -9,6 +9,7 @@ import Vant from 'vant'
 // 加载 Vant 全局样式
 import 'vant/lib/index.css'
 import 'amfe-flexible'
+import './utils/dayjs'
 // 注册使用 Vant 组件库
 Vue.use(Vant)
 

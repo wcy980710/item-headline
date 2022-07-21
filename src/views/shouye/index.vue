@@ -74,12 +74,11 @@ export default {
 
 <style scoped lang="less">
 .shouye-container {
-  padding-top: 180px;
+  padding-top: 93px;
   padding-bottom: 100px;
   /deep/.van-nav-bar__title {
     max-width: unset;
-  }
-  .search-btn {
+     .search-btn {
     width: 555px;
     height: 63px;
     background-color: #5babfb;
@@ -89,7 +88,7 @@ export default {
       font-size: 32px;
     }
   }
-  /deep/ .channel-tabs {
+   .channel-tabs {
     .van-tabs__wrap {
       position: fixed;
       top: 92px;
@@ -144,5 +143,7 @@ export default {
       background-size: contain;
     }
   }
+  }
+
 }
 </style>
