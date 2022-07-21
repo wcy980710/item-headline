@@ -98,10 +98,13 @@ export default {
       // 确认退出:清除登录状态(容器中的user +本地存储中的user)
       this.$dialog
         .confirm({ title: '确认退出吗?' })
-        .then(() => this.$store.commit('setUser', null))
-      removeItem(TOKEN_KEY).catch(() => {
-        '取消操作'
-      })
+        .then(() => {
+          this.$store.commit('setUser', null)
+          removeItem(TOKEN_KEY)
+        })
+        .catch(() => {
+          '取消操作'
+        })
     },
     async loadUserInfo () {
       try {
