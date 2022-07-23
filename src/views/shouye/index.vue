@@ -48,7 +48,11 @@
       closeable
       close-icon-position="top-left"
     >
-      <channel-edit :active="active" :my-channels="channels" />
+      <channel-edit
+        :active="active"
+        :my-channels="channels"
+        @update-active="onUpdateActive"
+      />
     </van-popup>
     <!-- /频道编辑 -->
     <!-- /频道编辑 -->
@@ -87,6 +91,10 @@ export default {
       } catch (err) {
         this.$toast('获取频道列表数据失败', err)
       }
+    },
+    onUpdateActive (index) {
+      this.active = index
+      this.isChennelEditShow = false
     }
   }
 }

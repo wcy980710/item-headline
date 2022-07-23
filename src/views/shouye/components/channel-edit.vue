@@ -47,6 +47,7 @@
     <!-- /频道推荐 -->
   </div>
 </template>
+
 <script>
 import { mapState } from 'vuex'
 import {
@@ -77,9 +78,7 @@ export default {
   },
   computed: {
     recommendChannels () {
-      return this.allChannels.filter(
-        (it) => !this.myChannels.find((channel) => +channel.id === +it.id)
-      )
+      return this.allChannels.filter((it) => !this.myChannels.find((channel) => channel.id === it.id))
     },
     ...mapState(['user'])
   },
@@ -102,7 +101,10 @@ export default {
     },
     async onAddChannel (channel) {
       /* eslint-disable-next-line */
-      this.myChannels.push(channel);
+      // react中严格禁止修改prop数据,vue中不推荐直接修改prop数据
+      // 允许的情况:如果prop数据是引用类型,可以在子组件修改该数据,但是不能直接对该数据赋值
+      // 不允许的情况:如果prop数据是基本类型数据,不可以在子组件修改该数组,这样会导致父子组件数据不一致,出现错误
+      this.myChannels.push(channel)
       if (this.user) {
         // 存储远程服务器
         try {
@@ -121,15 +123,15 @@ export default {
     },
     onMyChannelClick (channel, index) {
       if (this.isEdit) {
-        if (this.fixedChannels.includes(channel.id)) {
+        if (this.fixedChannels.includes(+channel.id)) {
           return
         }
 
         /* eslint-disable-next-line */
-        this.myChannels.splice(index, 1);
+        this.myChannels.splice(index, 1)
 
         if (index <= this.active) {
-          this.$emit('update-active', index - 1)
+          this.$emit('update-active', this.active - 1, true)
         }
 
         // 持久化数据
@@ -154,6 +156,7 @@ export default {
   }
 }
 </script>
+
 <style scoped lang="less">
 .channel-edit {
   padding: 85px 0;
