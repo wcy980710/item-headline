@@ -71,7 +71,7 @@ export default {
     ChannelEdit
   },
   props: {},
-  data () {
+  data() {
     return {
       active: 1,
       channels: [],
@@ -80,12 +80,12 @@ export default {
   },
   computed: {},
   watch: {},
-  created () {
+  created() {
     this.loadChannels()
   },
-  mounted () {},
+  mounted() {},
   methods: {
-    async loadChannels () {
+    async loadChannels() {
       try {
         const { data } = await getUserChannels()
         this.channels = data.data.channels
@@ -93,7 +93,7 @@ export default {
         this.$toast('获取频道列表数据失败', err)
       }
     },
-    onUpdateActive (index) {
+    onUpdateActive(index) {
       this.active = index
       this.isChennelEditShow = false
     }
