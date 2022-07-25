@@ -37,6 +37,11 @@ const routes = [
     component: () => import('@/views/login')
     // #这里是路由懒加载的写法
     // #完整写法是：@views/login/index.vue，但是index.vue可以省略，导入一个目录时默认导入目录下的index.vue
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('@/views/search')
   }
 ]
 

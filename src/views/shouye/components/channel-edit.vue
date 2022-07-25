@@ -10,7 +10,7 @@
         plain
         @click="isEdit = !isEdit"
       >
-        {{ isEdit ? "完成" : "编辑" }}
+        {{ isEdit ? '完成' : '编辑' }}
       </van-button>
     </van-cell>
     <van-grid :gutter="10" class="my-grid">
@@ -69,7 +69,7 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       allChannels: [],
       isEdit: false,
@@ -77,16 +77,18 @@ export default {
     }
   },
   computed: {
-    recommendChannels () {
-      return this.allChannels.filter((it) => !this.myChannels.find((channel) => channel.id === it.id))
+    recommendChannels() {
+      return this.allChannels.filter(
+        (it) => !this.myChannels.find((channel) => channel.id === it.id)
+      )
     },
     ...mapState(['user'])
   },
-  created () {
+  created() {
     this.loadAllChannels()
   },
   methods: {
-    async loadAllChannels () {
+    async loadAllChannels() {
       // 1. 如果未登录 && 有本地数据：使用本地数据
       const channels = getItem('TOUTIAO_CHANNELS')
       if (!this.user && channels) {
@@ -99,7 +101,7 @@ export default {
         } catch (err) {}
       }
     },
-    async onAddChannel (channel) {
+    async onAddChannel(channel) {
       /* eslint-disable-next-line */
       // react中严格禁止修改prop数据,vue中不推荐直接修改prop数据
       // 允许的情况:如果prop数据是引用类型,可以在子组件修改该数据,但是不能直接对该数据赋值
@@ -121,7 +123,7 @@ export default {
         setItem('TOUTIAO_CHANNELS', this.myChannels)
       }
     },
-    onMyChannelClick (channel, index) {
+    onMyChannelClick(channel, index) {
       if (this.isEdit) {
         if (this.fixedChannels.includes(+channel.id)) {
           return
@@ -141,7 +143,7 @@ export default {
       }
     },
     // 删除时持久化存储频道数据
-    async deleteChannel (channel) {
+    async deleteChannel(channel) {
       if (!this.user) {
         setItem('TOUTIAO_CHANNELS', this.myChannels)
       } else {
