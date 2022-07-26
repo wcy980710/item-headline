@@ -9,6 +9,7 @@
 
 <script>
 import { getSearchResult } from '@/api/search'
+
 export default {
   name: 'SearchResult',
   components: {},

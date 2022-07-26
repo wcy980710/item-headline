@@ -1,16 +1,19 @@
-
 <template>
-  <van-cell class="article-item">
+  <van-cell
+    :to="{
+      name: 'article',
+      params: {
+        articleId: article.art_id,
+      },
+    }"
+    class="article-item"
+  >
     <div slot="title" class="title van-multi-ellipsis--l2">
       {{ article.title }}
     </div>
     <div slot="label">
       <div v-if="article.cover.type === 3" class="cover-wrap">
-        <div
-          class="cover-item"
-          v-for="(img, index) in article.cover.images"
-          :key="index"
-        >
+        <div class="cover-item" v-for="(img, index) in article.cover.images" :key="index">
           <van-image class="cover-item-img" fit="cover" :src="img" />
         </div>
       </div>
@@ -40,13 +43,13 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {}
   },
   computed: {},
   watch: {},
-  created () {},
-  mounted () {},
+  created() {},
+  mounted() {},
   methods: {}
 }
 </script>
