@@ -1,7 +1,12 @@
 <template>
   <div class="article-container">
     <!-- 导航栏 -->
-    <van-nav-bar class="page-nav-bar" left-arrow title="黑马头条"></van-nav-bar>
+    <van-nav-bar
+      class="page-nav-bar"
+      @click-left="onClickLeft = $router.back()"
+      left-arrow
+      title="黑马头条"
+    ></van-nav-bar>
     <!-- /导航栏 -->
 
     <div class="main-wrap">
@@ -31,24 +36,35 @@
             {{ article.pubdate | relativeTime }}
           </div>
           <van-button
+            v-if="article.is_followed"
+            class="follow-btn"
+            round
+            size="small"
+            @click="onFollow"
+            :loading="followLoading"
+            >已关注
+          </van-button>
+          <van-button
+            v-else
             class="follow-btn"
             type="info"
             color="#3296fa"
             round
             size="small"
             icon="plus"
+            @click="onFollow"
+            :loading="followLoading"
             >关注</van-button
           >
-          <!-- <van-button
-            class="follow-btn"
-            round
-            size="small"
-          >已关注</van-button> -->
         </van-cell>
         <!-- /用户信息 -->
 
         <!-- 文章内容 -->
-        <div class="article-content markdown-body" v-html="article.content"></div>
+        <div
+          class="article-content markdown-body"
+          v-html="article.content"
+          ref="article-content"
+        ></div>
         <van-divider>正文结束</van-divider>
       </div>
       <!-- /加载完成-文章详情 -->
@@ -84,6 +100,8 @@
 
 <script>
 import { getArticleById } from '@/api/article'
+import { ImagePreview } from 'vant'
+import { deleteFollow, addFollow } from '@/api/user'
 export default {
   name: 'ArticleIndex',
   components: {},
@@ -97,7 +115,8 @@ export default {
     return {
       article: {}, // 文章详情
       loading: true, // 加载中的loading状态
-      errStatus: '' // 请求异常状态
+      errStatus: '', // 请求异常状态
+      followLoading: false //
     }
   },
   computed: {},
@@ -107,6 +126,24 @@ export default {
   },
   mounted() {},
   methods: {
+    previewImg() {
+      const contentEl = this.$refs['article-content']
+      // console.log(contentEl);
+      const allImg = contentEl.querySelectorAll('img')
+      const images = []
+      // console.log(allImg);
+      // console.log(images);
+
+      allImg.forEach((element, index) => {
+        images.push(element.src)
+        element.onclick = () => {
+          ImagePreview({
+            images,
+            startPosition: index
+          })
+        }
+      })
+    },
     async loadArticle() {
       try {
         // 随机错误
@@ -116,6 +153,10 @@ export default {
         this.loading = true
         const { data } = await getArticleById(this.articleId)
         this.article = data.data
+        // 注意：数据更新后并不会同步更新页面，所以想要获取数据更新后的页面元素，需要延时处理
+        setTimeout(() => {
+          this.previewImg()
+        }, 0)
       } catch (err) {
         // 加载失败 404
         if (err.response && err.response.status === 404) {
@@ -125,6 +166,29 @@ export default {
       }
       // 加载完成
       this.loading = false
+    },
+    async onFollow() {
+      this.followLoading = true // 展示关注按钮的loading 状态
+      try {
+        if (this.article.is_followed) {
+          // 已关注，取消关注
+          await deleteFollow(this.article.aut_id)
+        } else {
+          // 没有关注，添加关注
+          await addFollow(this.article.aut_id)
+        }
+        // 更新视图状态
+        this.article.is_followed = !this.article.is_followed
+      } catch (err) {
+        console.log(err)
+        let message = '操作失败,请重试!'
+        if (err.response && err.response.status === 400) {
+          // 如果是400错误，则是关注自己的结果
+          message = '你不能关注自已!'
+        }
+        this.$toast(message)
+      }
+      this.followLoading = false // 关闭关注按钮的loading 状态
     }
   }
 }
