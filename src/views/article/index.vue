@@ -35,27 +35,11 @@
           <div slot="label" class="publish-date">
             {{ article.pubdate | relativeTime }}
           </div>
-          <van-button
-            v-if="article.is_followed"
+          <follow-user
             class="follow-btn"
-            round
-            size="small"
-            @click="onFollow"
-            :loading="followLoading"
-            >已关注
-          </van-button>
-          <van-button
-            v-else
-            class="follow-btn"
-            type="info"
-            color="#3296fa"
-            round
-            size="small"
-            icon="plus"
-            @click="onFollow"
-            :loading="followLoading"
-            >关注</van-button
-          >
+            v-model="article.is_followed"
+            :user-id="article.aut_id"
+          ></follow-user>
         </van-cell>
         <!-- /用户信息 -->
 
@@ -66,6 +50,25 @@
           ref="article-content"
         ></div>
         <van-divider>正文结束</van-divider>
+        <!-- 底部区域 -->
+        <div class="article-bottom">
+          <van-button class="comment-btn" type="default" round size="small"
+            >写评论</van-button
+          >
+          <van-icon name="comment-o" badge="123" color="#777" />
+          <collect-article
+            class="btn-item"
+            v-model="article.is_collected"
+            :article-id="article.art_id"
+          />
+          <like-article
+            class="btn-item"
+            v-model="article.attitude"
+            :article-id="article.art_id"
+          />
+          <van-icon name="share" color="#777777"></van-icon>
+        </div>
+        <!-- /底部区域 -->
       </div>
       <!-- /加载完成-文章详情 -->
       <!-- 加载失败：404 -->
@@ -83,28 +86,22 @@
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
-
-    <!-- 底部区域 -->
-    <div class="article-bottom">
-      <van-button class="comment-btn" type="default" round size="small"
-        >写评论</van-button
-      >
-      <van-icon name="comment-o" info="123" color="#777" />
-      <van-icon color="#777" name="star-o" />
-      <van-icon color="#777" name="good-job-o" />
-      <van-icon name="share" color="#777777"></van-icon>
-    </div>
-    <!-- /底部区域 -->
   </div>
 </template>
 
 <script>
 import { getArticleById } from '@/api/article'
 import { ImagePreview } from 'vant'
-import { deleteFollow, addFollow } from '@/api/user'
+import FollowUser from '@/components/follow-user'
+import CollectArticle from '@/components/collect-article'
+import LikeArticle from '@/components/like-article'
 export default {
   name: 'ArticleIndex',
-  components: {},
+  components: {
+    FollowUser,
+    CollectArticle,
+    LikeArticle
+  },
   props: {
     articleId: {
       type: [Number, String, Object],
@@ -115,8 +112,7 @@ export default {
     return {
       article: {}, // 文章详情
       loading: true, // 加载中的loading状态
-      errStatus: '', // 请求异常状态
-      followLoading: false //
+      errStatus: '' // 请求异常状态
     }
   },
   computed: {},
@@ -128,12 +124,8 @@ export default {
   methods: {
     previewImg() {
       const contentEl = this.$refs['article-content']
-      // console.log(contentEl);
       const allImg = contentEl.querySelectorAll('img')
       const images = []
-      // console.log(allImg);
-      // console.log(images);
-
       allImg.forEach((element, index) => {
         images.push(element.src)
         element.onclick = () => {
@@ -166,29 +158,6 @@ export default {
       }
       // 加载完成
       this.loading = false
-    },
-    async onFollow() {
-      this.followLoading = true // 展示关注按钮的loading 状态
-      try {
-        if (this.article.is_followed) {
-          // 已关注，取消关注
-          await deleteFollow(this.article.aut_id)
-        } else {
-          // 没有关注，添加关注
-          await addFollow(this.article.aut_id)
-        }
-        // 更新视图状态
-        this.article.is_followed = !this.article.is_followed
-      } catch (err) {
-        console.log(err)
-        let message = '操作失败,请重试!'
-        if (err.response && err.response.status === 400) {
-          // 如果是400错误，则是关注自己的结果
-          message = '你不能关注自已!'
-        }
-        this.$toast(message)
-      }
-      this.followLoading = false // 关闭关注按钮的loading 状态
     }
   }
 }
@@ -313,7 +282,7 @@ export default {
       color: #a7a7a7;
     }
 
-    .van-icon {
+    /deep/.van-icon {
       font-size: 40px;
 
       .van-info {
