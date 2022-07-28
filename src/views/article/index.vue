@@ -50,12 +50,24 @@
           ref="article-content"
         ></div>
         <van-divider>正文结束</van-divider>
+        <!-- 文章评论列表 -->
+        <comment-list
+          :source="article.art_id"
+          :list="commentList"
+          @onload-success="totalCommentCount = $event.total_count"
+        />
+        <!-- /文章评论列表 -->
         <!-- 底部区域 -->
         <div class="article-bottom">
-          <van-button class="comment-btn" type="default" round size="small"
+          <van-button
+            class="comment-btn"
+            type="default"
+            round
+            size="small"
+            @click="isPostShow = true"
             >写评论</van-button
           >
-          <van-icon name="comment-o" badge="123" color="#777" />
+          <van-icon name="comment-o" :badge="totalCommentCount" color="#777" />
           <collect-article
             class="btn-item"
             v-model="article.is_collected"
@@ -69,6 +81,11 @@
           <van-icon name="share" color="#777777"></van-icon>
         </div>
         <!-- /底部区域 -->
+        <!-- 发布评论 -->
+        <van-popup v-model="isPostShow" position="bottom">
+          <comment-post :target="article.art_id" @post-success="onPostSuccess"
+        /></van-popup>
+        <!-- /发布评论 -->
       </div>
       <!-- /加载完成-文章详情 -->
       <!-- 加载失败：404 -->
@@ -95,12 +112,16 @@ import { ImagePreview } from 'vant'
 import FollowUser from '@/components/follow-user'
 import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
+import CommentList from './components/comment-list'
+import CommentPost from './components/comment-post'
 export default {
   name: 'ArticleIndex',
   components: {
     FollowUser,
     CollectArticle,
-    LikeArticle
+    LikeArticle,
+    CommentList,
+    CommentPost
   },
   props: {
     articleId: {
@@ -112,7 +133,10 @@ export default {
     return {
       article: {}, // 文章详情
       loading: true, // 加载中的loading状态
-      errStatus: '' // 请求异常状态
+      errStatus: '', // 请求异常状态
+      totalCommentCount: 0,
+      isPostShow: false, // 控制发布评论的展示状态
+      commentList: [] // 评论列表
     }
   },
   computed: {},
@@ -158,6 +182,12 @@ export default {
       }
       // 加载完成
       this.loading = false
+    },
+    onPostSuccess(data) {
+      // 关闭弹出层
+      this.isPostShow = false
+      // 将发布内容显示到列表顶部
+      this.commentList.unshift(data.new_obj)
     }
   }
 }
