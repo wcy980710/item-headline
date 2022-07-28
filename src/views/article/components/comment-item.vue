@@ -17,7 +17,9 @@
       <p class="comment-content">{{ comment.content }}</p>
       <div class="bottom-info">
         <span class="comment-pubdate">{{ comment.pubdate | relativeTime }}</span>
-        <van-button class="reply-btn" round>回复 {{ comment.reply_count }}</van-button>
+        <van-button class="reply-btn" @click="$emit('reply-click', comment)" round
+          >回复 {{ comment.reply_count }}</van-button
+        >
       </div>
     </div>
   </van-cell>
@@ -98,7 +100,7 @@ export default {
     align-items: center;
   }
   .reply-btn {
-    width: 135px;
+    // width: 135px;
     height: 48px;
     line-height: 48px;
     font-size: 21px;

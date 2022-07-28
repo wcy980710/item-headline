@@ -55,6 +55,7 @@
           :source="article.art_id"
           :list="commentList"
           @onload-success="totalCommentCount = $event.total_count"
+          @reply-click="onReplyClick"
         />
         <!-- /文章评论列表 -->
         <!-- 底部区域 -->
@@ -103,6 +104,14 @@
       </div>
       <!-- /加载失败：其它未知错误（例如网络原因或服务端异常） -->
     </div>
+    <!-- 评论回复 -->
+    <van-popup v-model="isReplyShow" position="bottom" style="height: 100%">
+      <CommentReply
+        :comment="currentComment"
+        v-if="isReplyShow"
+        @close="isReplyShow = false"
+    /></van-popup>
+    <!-- /评论回复 -->
   </div>
 </template>
 
@@ -114,6 +123,7 @@ import CollectArticle from '@/components/collect-article'
 import LikeArticle from '@/components/like-article'
 import CommentList from './components/comment-list'
 import CommentPost from './components/comment-post'
+import CommentReply from './components/comment-reply'
 export default {
   name: 'ArticleIndex',
   components: {
@@ -121,12 +131,20 @@ export default {
     CollectArticle,
     LikeArticle,
     CommentList,
-    CommentPost
+    CommentPost,
+    CommentReply
   },
   props: {
     articleId: {
       type: [Number, String, Object],
       required: true
+    }
+  },
+  // 给所有的后代组件提供数据
+  // 然后在任何后代组件里，我们都可以使用 inject 选项来接收指定的我们想要添加在这个实例上的属性
+  provide: function () {
+    return {
+      articleId: this.articleId
     }
   },
   data() {
@@ -136,7 +154,9 @@ export default {
       errStatus: '', // 请求异常状态
       totalCommentCount: 0,
       isPostShow: false, // 控制发布评论的展示状态
-      commentList: [] // 评论列表
+      commentList: [], // 评论列表
+      isReplyShow: false, // 控制评论回复弹出层的显示状态
+      currentComment: {} // 当前点击回复的评论项
     }
   },
   computed: {},
@@ -188,6 +208,11 @@ export default {
       this.isPostShow = false
       // 将发布内容显示到列表顶部
       this.commentList.unshift(data.new_obj)
+    },
+    onReplyClick(comment) {
+      this.currentComment = comment
+      // 显示回复评论的弹出层
+      this.isReplyShow = true
     }
   }
 }

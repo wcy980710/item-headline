@@ -5,9 +5,15 @@
     finished-text="没有更多了"
     :error.sync="error"
     error-text="加载失败，请点击重试"
+    :immediate-check="false"
     @load="onLoad"
   >
-    <comment-item v-for="(item, index) in list" :key="index" :comment="item" />
+    <comment-item
+      v-for="(item, index) in list"
+      :key="index"
+      @reply-click="$emit('reply-click', $event)"
+      :comment="item"
+    />
   </van-list>
 </template>
 
@@ -26,6 +32,14 @@ export default {
     list: {
       type: Array,
       default: () => []
+    },
+    type: {
+      type: String,
+      // 自定义 Prop 数据验证
+      validator(value) {
+        return ['a', 'c'].includes(value)
+      },
+      default: 'a'
     }
   },
   // 局部注册的组件
@@ -52,7 +66,7 @@ export default {
     async onLoad() {
       try {
         const { data } = await getComments({
-          type: 'a', //  评论类型，a-对文章(article)的评论，c-对评论(comment)的回复
+          type: this.type, //  评论类型，a-对文章(article)的评论，c-对评论(comment)的回复
           source: this.source.toString(), // 源id，文章id或评论id(特别注意：需要手动加上toString()，否则会在source的值两边加上双引号，导致id不是一个有效的整形)
           offset: this.offset, // 获取评论数据的偏移量，值为评论id，表示从此id的数据向后取，不传表示从第一页开始读取数据
           limit: this.limit // 获取的评论数据个数，不传表示采用后端服务设定的默认每页数据量
@@ -83,6 +97,7 @@ export default {
    * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
    */
   created() {
+    this.loading = true
     this.onLoad()
   },
   /**

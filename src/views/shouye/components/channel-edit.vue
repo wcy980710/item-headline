@@ -10,7 +10,7 @@
         plain
         @click="isEdit = !isEdit"
       >
-        {{ isEdit ? '完成' : '编辑' }}
+        {{ isEdit ? "完成" : "编辑" }}
       </van-button>
     </van-cell>
     <van-grid :gutter="10" class="my-grid">
@@ -50,11 +50,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import {
-  getAllChannels,
-  addUserChannel,
-  deleteUserChannel
-} from '@/api/channel'
+import { getAllChannels, addUserChannel, deleteUserChannel } from '@/api/channel'
 import { setItem, getItem } from '@/utils/storage'
 
 export default {
@@ -130,7 +126,7 @@ export default {
         }
 
         /* eslint-disable-next-line */
-        this.myChannels.splice(index, 1)
+        this.myChannels.splice(index, 1);
 
         if (index <= this.active) {
           this.$emit('update-active', this.active - 1, true)

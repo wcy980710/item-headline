@@ -21,25 +21,17 @@
         通过swipeable属性可以开启滑动切换标签页
         -->
     <van-tabs class="channel-tabs" v-model="active" animated swipeable>
-      <van-tab
-        v-for="(item, index) in channels"
-        :key="index"
-        :title="item.name"
-      >
+      <van-tab v-for="(item, index) in channels" :key="index" :title="item.name">
         <!-- 文章列表 -->
         <article-list :channel="item" />
         <!-- /文章列表 -->
       </van-tab>
       <div slot="nav-right" class="placeholder"></div>
       <div slot="nav-right" class="hamburger-btn">
-        <i
-          @click="isEditChannelShow = true"
-          class="toutiao toutiao-gengduo"
-        ></i>
+        <i @click="isEditChannelShow = true" class="toutiao toutiao-gengduo"></i>
       </div>
     </van-tabs>
     <!-- /频道列表 -->
-    <!-- 频道编辑 -->
     <!-- 频道编辑 -->
     <van-popup
       class="edit-channel-popup"
@@ -55,7 +47,6 @@
         @update-active="onUpdateActive"
       />
     </van-popup>
-    <!-- /频道编辑 -->
     <!-- /频道编辑 -->
   </div>
 </template>
@@ -95,7 +86,7 @@ export default {
     },
     onUpdateActive(index) {
       this.active = index
-      this.isChennelEditShow = false
+      this.isEditChannelShow = false
     }
   }
 }
