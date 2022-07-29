@@ -18,7 +18,9 @@
           <span class="name">{{ userInfo.name }}</span>
         </div>
         <div class="right">
-          <van-button size="mini" round class="ziliao">编辑资料</van-button>
+          <van-button size="mini" round class="ziliao" to="/user/profile"
+            >编辑资料</van-button
+          >
         </div>
       </div>
       <div class="data-stats">
@@ -77,7 +79,7 @@ export default {
   // 局部注册的组件
   components: {},
   // 组件状态值
-  data () {
+  data() {
     return {
       userInfo: {} // 用户信息
     }
@@ -90,7 +92,7 @@ export default {
   watch: {},
   // 组件方法
   methods: {
-    onLogout () {
+    onLogout() {
       // 提出提示
       // 在组件中需要使用 this.$dialog 来调用弹框组件
       // 点击弹框确认执行then
@@ -106,7 +108,7 @@ export default {
           '取消操作'
         })
     },
-    async loadUserInfo () {
+    async loadUserInfo() {
       try {
         const { data } = await getUserInfo()
         this.userInfo = data.data
@@ -121,7 +123,7 @@ export default {
    *
    * 组件实例创建完成，属性已绑定，但DOM还未生成，$ el属性还不存在
    */
-  created () {
+  created() {
     // 初始化的时候，如果用户登录了，我才请求获取当前登录用户的信息
     if (this.user) {
       this.loadUserInfo()
@@ -131,7 +133,7 @@ export default {
    * el 被新创建的 vm.$ el 替换，并挂载到实例上去之后调用该钩子。
    * 如果 root 实例挂载了一个文档内元素，当 mounted 被调用时 vm.$ el 也在文档内。
    */
-  mounted () {}
+  mounted() {}
 }
 </script>
 

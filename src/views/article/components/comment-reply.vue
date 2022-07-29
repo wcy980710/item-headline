@@ -71,7 +71,6 @@ export default {
   // 组件方法
   methods: {
     onPostSuccess(data) {
-      console.log(123, data)
       // 更新回复的数量
       this.comment.reply_count++
       // 关闭弹层

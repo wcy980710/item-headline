@@ -1,11 +1,15 @@
 <template>
   <div class="search-suggestion">
-    <van-cell icon="search" v-for="(text, index) in suggestions" :key="index" @click="$emit('search', text)">
+    <van-cell
+      icon="search"
+      v-for="(text, index) in suggestions"
+      :key="index"
+      @click="$emit('search', text)"
+    >
       <template #title>
         <span v-html="highlightText(text)"></span>
       </template>
     </van-cell>
-
   </div>
 </template>
 
@@ -41,13 +45,13 @@ export default {
       immediate: true // 首次监视触发
     }
   },
-  created() { },
-  mounted() { },
+  created() {},
+  mounted() {},
   methods: {
     async loadSearchSuggestion(q) {
       try {
         const { data } = await getSearchSuggestion(q)
-        this.suggestions = data.data.options
+        this.suggestions = data.data.options.filter((it) => it)
       } catch (err) {
         this.$toast('获取失败')
       }
@@ -61,5 +65,4 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

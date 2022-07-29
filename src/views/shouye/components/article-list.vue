@@ -14,11 +14,7 @@
         :error.sync="error"
         error-text="请求失败，点击重新加载"
       >
-        <article-item
-          v-for="(article, index) in list"
-          :key="index"
-          :article="article"
-        />
+        <article-item v-for="(article, index) in list" :key="index" :article="article" />
       </van-list>
     </van-pull-refresh>
   </div>
@@ -39,7 +35,7 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       list: [], // 存储列表数据的数组
       loading: false, // 控制加载中 loading 状态
@@ -52,11 +48,11 @@ export default {
   },
   computed: {},
   watch: {},
-  created () {},
-  mounted () {},
+  created() {},
+  mounted() {},
   methods: {
     // 当触发上拉加载更多的时候调用该函数
-    async onLoad () {
+    async onLoad() {
       try {
         // 1. 请求获取数据
         const { data } = await getArticles({
@@ -81,14 +77,13 @@ export default {
           this.finished = true
         }
       } catch (err) {
-        console.log(err)
         this.loading = false // 关闭 loading 效果
         this.error = true // 开启错误提示
       }
     },
 
     // 当触发下拉刷新的时候调用该函数
-    async onRefresh () {
+    async onRefresh() {
       try {
         // 1. 请求获取数据
         const { data } = await getArticles({
@@ -107,7 +102,6 @@ export default {
         // 提示成功
         this.refreshSuccessText = `刷新成功，更新了${results.length}条数据`
       } catch (err) {
-        console.log(err)
         this.isRefreshLoading = false // 关闭下拉刷新的 loading 状态
         this.$toast('刷新失败')
       }
